@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PayloadDescription xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Assembly>C:\Users\Administrateur\Documents\Visual Studio 2012\Projects\Shon\UnitTestProject1\bin\Debug\Shon.Test.dll</Assembly>
+  <Class>Shon.Test.HostTest</Class>
+  <BinaryFolder>C:\Users\Administrateur\Documents\Visual Studio 2012\Projects\Shon\UnitTestProject1\bin\Debug</BinaryFolder>
+  <ConfigurationFile>C:\Users\Administrateur\Documents\Visual Studio 2012\Projects\Shon\UnitTestProject1\bin\Debug\Shon.Test.config</ConfigurationFile>
+</PayloadDescription>

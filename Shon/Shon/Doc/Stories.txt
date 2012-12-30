@@ -1,0 +1,15 @@
+﻿As a service developer, I want to be able to host it as a windows service or as a command line app.
+
+As a windows service developper I do not want to be bothered with details
+
+As a developper I want to be able to install/uninstall the service easily
+
+As an installer, I expect the system to assist me filling the proper information:
+  - service details: executable, arguments, directory, name
+
+As an operational manager, I expect to define shon packaging and to be able to update it whenever I think it is needed.
+
+As an operational architect I want to control where the service is deployed and run.
+As an operational architect I want to couple the service to the IS description
+
+As a service developper I want to build a package that has little to none coupling to the deployement site
