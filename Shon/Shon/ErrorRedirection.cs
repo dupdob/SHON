@@ -35,8 +35,10 @@ namespace Shon
         private readonly object _synchro = new object();
         private bool _closed = false;
         private bool _closing = false;
+        // default code page, could be made configurable at a later stage
         private readonly int _codepage = 1251;
         #endregion // attributes
+
         #region methods
         /// <summary>
         /// Default constructor
