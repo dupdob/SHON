@@ -37,9 +37,6 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceProcess.Helpers">
-      <HintPath>..\packages\ServiceProcess.Helpers.0.9.1.9\lib\net40\ServiceProcess.Helpers.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />

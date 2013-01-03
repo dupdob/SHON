@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,20 +9,25 @@ using System.Threading.Tasks;
 
 namespace Shon.Test
 {
-    [TestClass]
+    [TestFixture]
     public class DescriptionTests
     {
-        [TestMethod]
+        [Test]
         public void AutoConf()
         {
             PayloadDescription desc = new PayloadDescription();
-            string assembly=Assembly.GetExecutingAssembly().Location;
+            string assembly=Assembly.GetExecutingAssembly().CodeBase;
+            if (Uri.IsWellFormedUriString(assembly,UriKind.Absolute))
+            {
+                assembly = new Uri(assembly).AbsolutePath;
+                assembly = assembly.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
             desc.Assembly = Path.GetFileName(assembly);
             desc.Class = typeof(HostTest).FullName;
             Assert.AreEqual(assembly+".config", desc.ConfigurationFile, "Config file should match default name");
             Assert.AreEqual(Path.GetDirectoryName(assembly), desc.BinaryFolder, "binary folder should be assembly folder");
         }
-        [TestMethod]
+        [Test]
         public void ConfSerialization()
         {
             string filename = "testconfig.xml";
@@ -43,7 +48,7 @@ namespace Shon.Test
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ConfLoad()
         {
             string filename = "testfile.xml";

@@ -1,14 +1,15 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shon;
 using System.IO;
+using NUnit.Framework;
+using System.Threading;
 
 namespace Shon.Test
 {
-    [TestClass]
+    [TestFixture]
     public class RedirectionTest
     {
-        [TestMethod]
+        [Test]
         public void ErrorRedirectionBasicTest()
         {
             string filename = "Test.log";
@@ -26,7 +27,7 @@ namespace Shon.Test
             Assert.AreEqual(testText, text, "Logfile does not contain expected text");
         }
 
-        [TestMethod]
+        [Test]
         public void ErrorFailureTest()
         {
             string filename = "invalidname?/";
@@ -34,6 +35,34 @@ namespace Shon.Test
             {
                 Assert.IsFalse(direct.Init(filename), "Init must fail if filename is invalid");
             }
+        }
+
+        [Test]
+        public void RedirectionFinalizationTest()
+        {
+            object synchro = new object();
+            bool done = false;
+            ErrorRedirection test = new ErrorRedirection();
+            test = null;
+            Thread thread = new Thread(() =>
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                lock (synchro)
+                {
+                    done = true;
+                    Monitor.Pulse(synchro);
+                }
+            });
+            thread.Start();
+            lock (synchro)
+            {
+                if (!done)
+                {
+                    Monitor.Wait(synchro, 1000);
+                }
+            }
+            thread.Interrupt();
         }
     }
 }

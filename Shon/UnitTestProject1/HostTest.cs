@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 using Shon.TestService;
+using NUnit.Framework;
+using System.IO;
+using System.Threading;
 namespace Shon.Test
 {
-    [TestClass]
+    [TestFixture]
     public class HostTest
     {
-
-        [TestMethod]
+//        const string fileHeader = "file:///";
+        [Test]
+        //basic smoke test
         public void BasicHostTest()
         {
             using (Host test = new Host())
@@ -24,13 +27,15 @@ namespace Shon.Test
             }
         }
 
-        [TestMethod]
+        [Test]
+        // perform a real initialization of the host
         public void InitTest()
         {
             using (Host test = new Host())
             {
                 PayloadDescription desc = new PayloadDescription();
-                desc.Assembly = typeof(TestService.TestService).Assembly.Location;
+                string assembly = typeof(TestService.TestService).Assembly.CodeBase;
+                desc.Assembly = assembly;
                 desc.Class = typeof(TestService.TestService).FullName;
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
                 using (TestTracer tracer = TestTracer.FromDomain(test.Domain))
@@ -49,15 +54,23 @@ namespace Shon.Test
 
         }
 
-        [TestMethod]
+
+        [Test]
+        // test using a guest with a specified configuration file
         public void AlternateTest()
         {
             using (Host test = new Host())
             {
                 PayloadDescription desc = new PayloadDescription();
-                desc.Assembly = typeof(TestService.TestService).Assembly.Location;
+                string assembly = typeof(TestService.TestService).Assembly.CodeBase;
+                //if (assembly.StartsWith(fileHeader))
+                //{
+                //    assembly = assembly.Substring(fileHeader.Length);
+                //    assembly = assembly.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                //}
+                desc.Assembly = assembly;
                 desc.Class = typeof(TestService.TestService).FullName;
-                desc.ConfigurationFile = "AltShon.TestService.config";
+                desc.ConfigurationFile =Path.GetFullPath("AltShon.TestService.config");
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
                 using (TestTracer tracer = TestTracer.FromDomain(test.Domain))
                 {
@@ -73,9 +86,12 @@ namespace Shon.Test
                 }
             }
         }
-//        [TestMethod]
+
+        [Test]
         public void FinalizerTest()
         {
+            object synchro = new object();
+            bool done = false;
             Host test = new Host();
             PayloadDescription desc = new PayloadDescription();
             desc.Assembly = typeof(TestService.TestService).Assembly.Location;
@@ -83,10 +99,27 @@ namespace Shon.Test
             desc.ConfigurationFile = "AltShon.TestService.config";
             Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
             test = null;
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+            Thread thread = new Thread (() =>
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                lock (synchro)
+                {
+                    done = true;
+                    Monitor.Pulse(synchro);
+                }
+            });
+            thread.Start();
+            lock (synchro)
+            {
+                if (!done)
+                {
+                    Monitor.Wait(synchro, 1000);
+                }
+            }
+            thread.Interrupt();
         }
-        [TestMethod]
+        [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void HostMethodChecks()
         {

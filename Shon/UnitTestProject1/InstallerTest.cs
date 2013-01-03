@@ -1,15 +1,15 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
+using System;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Threading;
 
 namespace Shon.Test
 {
-    [TestClass]
+    [TestFixture]
     public class InstallerTest
     {
-        [TestMethod]
+        [Test]
         public void BasicInstallTest()
         {
             ServiceController controler;

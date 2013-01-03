@@ -31,13 +31,17 @@ namespace Shon
         {
             get
             {
-                if (!Path.IsPathRooted(_assembly))
+                if (_assembly == null)
+                {
+                    return null;
+                }
+                if (!Uri.IsWellFormedUriString(_assembly, UriKind.Absolute) && !Path.IsPathRooted(_assembly))
                 {
                     return Path.Combine(BinaryFolder, _assembly);
                 }
                 else
                 {
-                    return this._assembly;
+                    return _assembly;
                 }
             }
 
@@ -62,16 +66,34 @@ namespace Shon
                 // folder has not been defined
                 if (string.IsNullOrEmpty(_binaryFolder))
                 {
-                    // build one using other informations
-                    string result=Path.GetDirectoryName(_assembly);
-                    if (string.IsNullOrEmpty(result))
+                    string result;
+                    // analyse assembly name forat
+                    if (Uri.IsWellFormedUriString(_assembly, UriKind.Absolute))
                     {
-                        result = AppDomain.CurrentDomain.BaseDirectory;
-                        logger.InfoFormat("BinaryFolder undefined, no path in assembly name,  using Shon base: ", result);
+                        // this is an URI, not a filename
+                        Uri uri = new Uri(_assembly);
+                        result=uri.GetComponents(UriComponents.Path, UriFormat.UriEscaped);
                     }
                     else
                     {
-                        logger.InfoFormat("BinaryFolder undefined, parsing assembly name instead: ", result);
+                        // build one using other informations
+                        result = Path.GetDirectoryName(_assembly);
+                        if (string.IsNullOrEmpty(result))
+                        {
+                            result = AppDomain.CurrentDomain.BaseDirectory;
+                            if (Path.GetPathRoot(result) != result)
+                            {
+                                if (result[result.Length - 1] == Path.DirectorySeparatorChar)
+                                {
+                                    result = result.Substring(0, result.Length - 1);
+                                }
+                            }
+                            logger.InfoFormat("BinaryFolder undefined, no path in assembly name,  using Shon base: ", result);
+                        }
+                        else
+                        {
+                            logger.InfoFormat("BinaryFolder undefined, parsing assembly name instead: ", result);
+                        }
                     }
 
                     _binaryFolder = result;
@@ -83,6 +105,29 @@ namespace Shon
                 _binaryFolder = value;
             }
         }
+        /// <summary>
+        /// Configuration File
+        /// </summary>
+        public string ConfigurationFile
+        {
+            get
+            {
+                if (this._configFile == null)
+                {
+                    return Assembly+".config";
+                }
+                else
+                {
+                    return this._configFile;
+                }
+            }
+            set
+            {
+                this._configFile = value;
+            }
+        }
+        #endregion
+        #region methods
         /// <summary>
         /// Load a XML configuration file
         /// </summary>
@@ -112,26 +157,5 @@ namespace Shon
         }
         #endregion
 
-        /// <summary>
-        /// Configuration File
-        /// </summary>
-        public string ConfigurationFile
-        {
-            get
-            {
-                if (this._configFile == null)
-                {
-                    return Assembly+".config";
-                }
-                else
-                {
-                    return this._configFile;
-                }
-            }
-            set
-            {
-                this._configFile = value;
-            }
-        }
     }
 }

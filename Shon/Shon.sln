@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shon.UnitTest", "UnitTestPr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shon.TestService", "Shon.TestService\Shon.TestService.csproj", "{EC432B01-5F6A-4326-8642-F2469FFAA975}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTPL", "TestTPL\TestTPL.csproj", "{9EDC9E2F-6FD9-4607-8E45-981BEC9A6C4A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,10 +28,6 @@ Global
 		{EC432B01-5F6A-4326-8642-F2469FFAA975}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC432B01-5F6A-4326-8642-F2469FFAA975}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC432B01-5F6A-4326-8642-F2469FFAA975}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9EDC9E2F-6FD9-4607-8E45-981BEC9A6C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EDC9E2F-6FD9-4607-8E45-981BEC9A6C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EDC9E2F-6FD9-4607-8E45-981BEC9A6C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EDC9E2F-6FD9-4607-8E45-981BEC9A6C4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

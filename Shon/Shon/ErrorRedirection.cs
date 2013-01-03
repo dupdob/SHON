@@ -30,6 +30,7 @@ namespace Shon
         private StreamWriter _errorWriter;
         private FileStream _logFile;
         private TextWriter _previousErrorWriter;
+        private TextWriter _outputWriter;
         private IntPtr ? _originalErrorHandle;
         private readonly byte[] _buffer;
         private readonly object _synchro = new object();
@@ -62,6 +63,8 @@ namespace Shon
         /// Initialize redirection
         /// </summary>
         /// <returns>true if successful</returns>
+        // FXCop warning addressed
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         public bool Init(string fileName)
         {
             try
@@ -69,17 +72,19 @@ namespace Shon
                 // init error redirection
                 // initalize server read
                 // logfile
-                ListenForData();
-                _logFile = new FileStream(fileName, FileMode.OpenOrCreate);
-  
                 // open file
+                _logFile = new FileStream(fileName, FileMode.OpenOrCreate);
+                // output writer
+                _outputWriter = new StreamWriter(_logFile);
+                ListenForData();
+                // create writer for .Net error
                 _errorWriter = new StreamWriter(_client, System.Text.Encoding.GetEncoding(_codepage));
                 // .net error redirection
                 _previousErrorWriter = Console.Error;
                 Console.SetError(_errorWriter);
                 // native error
                 _originalErrorHandle= NativeMethods.GetStdHandle(-12);
-
+                // scaffolding for handle management
                 bool mustReleaseSafeHandle = false;
                 RuntimeHelpers.PrepareConstrainedRegions();
                 try
@@ -116,7 +121,7 @@ namespace Shon
             if (dataCount > 0)
             {
                 string message = System.Text.Encoding.GetEncoding(_codepage).GetString(_buffer, 0, dataCount);
-                _logFile.Write(_buffer, 0, dataCount);
+                RedirectError(message);
                 ListenForData();
             }
             else
@@ -125,6 +130,7 @@ namespace Shon
                 lock (_synchro)
                 {
                     _closed = true;
+                    _outputWriter.Dispose();
                     // close the server pipe
                     _server.Dispose();
                     // close the file
@@ -133,6 +139,11 @@ namespace Shon
                     Monitor.Pulse(_synchro);
                 }
             }
+        }
+
+        private void RedirectError(string message)
+        {
+            _outputWriter.Write(message);
         }
 
         private void ListenForData()
@@ -148,6 +159,7 @@ namespace Shon
             GC.SuppressFinalize(this);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_logFile"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_outputWriter")]
         private void Dispose(bool disposing)
         {
             // restore
@@ -181,10 +193,12 @@ namespace Shon
                             _client.Dispose();
                         }
                         // wait for server part dispose
-                        Monitor.Wait(this._synchro, 5000);
+                        if (Monitor.Wait(this._synchro, 5000))
+                        {
+                            _server = null;
+                        }
                     }
                 }
-                _server = null;
             }
         }
         

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Shon.TestService
 {
-    public class TestTracer: MarshalByRefObject, IDisposable
+    public sealed class TestTracer: MarshalByRefObject, IDisposable
     {
         static private List<string> storage = new List<string>();
 
