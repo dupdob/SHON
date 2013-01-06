@@ -12,9 +12,22 @@ namespace Shon
     {
 #region attributes
         private object _payload;
+        private const string startName = "Start";
+        private bool _hasCrashed = false;
 #endregion
-
-#region methods
+        #region attributes
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool HasCrashed
+        {
+            get
+            {
+                return _hasCrashed;
+            }
+        }
+        #endregion // attributes
+        #region methods
         public PayloadWrapper()
         {
             // ensure object is not collected
@@ -37,9 +50,31 @@ namespace Shon
         /// <summary>
         /// Start the service
         /// </summary>
-        public void Start()
+        public void Start(string parameter)
         {
-            InvokePayload("Start");
+            MethodInfo withParam = _payload.GetType().GetMethod(startName, BindingFlags.Public | BindingFlags.Instance, null, new Type[] { "".GetType() }, null);
+            MethodInfo withoutParam = _payload.GetType().GetMethod(startName, BindingFlags.Public | BindingFlags.Instance, null, new Type[] {}, null);
+            try
+            {
+                if (parameter != null)
+                {
+                    if (withParam != null)
+                    {
+                        withParam.Invoke(_payload, new object[] { parameter });
+                    }
+                    else
+                    {
+                    }
+                }
+                else
+                {
+                    withoutParam.Invoke(_payload, null);
+                }
+            }
+            catch (Exception)
+            {
+                _hasCrashed = true;
+            }
         }
 
         /// <summary>
@@ -47,6 +82,8 @@ namespace Shon
         /// </summary>
         public void Stop()
         {
+            if (_hasCrashed)
+                return;
             InvokePayload("Stop");
         }
 

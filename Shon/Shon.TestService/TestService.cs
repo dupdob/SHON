@@ -12,6 +12,7 @@ namespace Shon.TestService
     /// </summary>
     public class TestService: IDisposable
     {
+        private string _parameter;
         public void Start()
         {
             TestTracer.Log("Start");
@@ -20,6 +21,22 @@ namespace Shon.TestService
                 ConfigurationUserLevel.None);
             TestTracer.Log(config.AppSettings.Settings["Demo"].Value);
 
+        }
+
+        public void Start(string param)
+        {
+            TestTracer.Log("StartWithParam");
+            Configuration config =
+                ConfigurationManager.OpenExeConfiguration(
+                ConfigurationUserLevel.None);
+            TestTracer.Log(config.AppSettings.Settings["Demo"].Value);
+            _parameter = param;
+
+            if (_parameter == "SyncRaiseOnStart")
+            {
+                TestTracer.Log("RaisedException");
+                throw new ApplicationException("Raised on start");
+            }
         }
 
         public void Stop()

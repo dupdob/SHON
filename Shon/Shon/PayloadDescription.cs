@@ -157,5 +157,7 @@ namespace Shon
         }
         #endregion
 
+
+        public string Parameter { get; set; }
     }
 }

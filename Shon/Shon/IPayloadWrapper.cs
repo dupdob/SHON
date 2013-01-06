@@ -12,6 +12,10 @@ namespace Shon
     internal interface iPayloadWrapper: IDisposable
     {
         /// <summary>
+        /// Gets a flag indicating if the guest has crashed, e.g. raised an unhandled exception
+        /// </summary>
+        bool HasCrashed { get; }
+        /// <summary>
         /// Initialize the wrapper
         /// </summary>
         /// <param name="payloadDesc">payload description</param>
@@ -21,7 +25,7 @@ namespace Shon
         /// <summary>
         /// Start the service
         /// </summary>
-        void Start();
+        void Start(string parameter);
 
         /// <summary>
         /// Stops the service

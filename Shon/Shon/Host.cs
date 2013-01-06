@@ -18,6 +18,7 @@ namespace Shon
         #region attributes
         private AppDomain _domain;
         private iPayloadWrapper _payload;
+        private PayloadDescription _description;
         #endregion
 
         #region properties
@@ -44,13 +45,14 @@ namespace Shon
             {
                 throw new ArgumentNullException("description");
             }
+            _description = description;
             // work the creation of the appomain
             setup.ApplicationBase = description.BinaryFolder;
             setup.ConfigurationFile = description.ConfigurationFile;
             _domain=AppDomain.CreateDomain(string.Format(CultureInfo.CurrentCulture, "{0}.{1}", description.Assembly, description.Class), null, setup);
             // creates payload wrapper in charge of interaction with guest
             _payload = (iPayloadWrapper)_domain.CreateInstanceFromAndUnwrap(typeof(PayloadWrapper).Assembly.CodeBase, typeof(PayloadWrapper).FullName);
-            _payload.Initialize(description.Assembly, description.Class);
+            _payload.Initialize(description.Assembly, _description.Class);
             return true;
         }
 
@@ -94,7 +96,7 @@ namespace Shon
         /// </summary>
         public void Start()
         {
-            _payload.Start();
+            _payload.Start(_description.Parameter);
         }
 
         /// <summary>

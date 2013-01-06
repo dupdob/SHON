@@ -22,6 +22,10 @@ namespace Shon.TestService
         }
         public string Pop()
         {
+            if (storage.Count == 0)
+            {
+                return string.Empty;
+            }
             string result = storage[0];
             storage.RemoveAt(0);
             return result;
@@ -32,7 +36,7 @@ namespace Shon.TestService
             storage.Clear();
         }
 
-        public void Dispose()
+        public void AssertEmpty()
         {
             try
             {
@@ -42,6 +46,9 @@ namespace Shon.TestService
             {
                 Reset();
             }
+        }
+        public void Dispose()
+        {
         }
     }
 }
