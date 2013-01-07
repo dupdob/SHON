@@ -26,6 +26,10 @@ namespace Shon
                 return _hasCrashed;
             }
         }
+        /// <summary>
+        /// Raised for logging
+        /// </summary>
+        public event LogHandler Logging;
         #endregion // attributes
         #region methods
         public PayloadWrapper()
@@ -33,6 +37,14 @@ namespace Shon
             // ensure object is not collected
             ILease lease = (ILease)InitializeLifetimeService();
             lease.InitialLeaseTime = Timeout.InfiniteTimeSpan;
+        }
+
+        private void Log(LogLevel level, string message)
+        {
+            if (Logging != null)
+            {
+                Logging(level, message);
+            }
         }
         /// <summary>
         /// Initialize wrapper
@@ -42,8 +54,13 @@ namespace Shon
         /// <returns></returns>
         public bool Initialize(string assemblyName, string className)
         {
+            Log(LogLevel.Debug, string.Format("Payload creates guest instance: {0} from {1}.", className, assemblyName));
             // instantiate guest object
             _payload = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(assemblyName, className);
+            if (_payload == null)
+            {
+                Log(LogLevel.Error, string.Format("Payload failed to create guest instance: {0} from {1}.", className, assemblyName));
+            }
             return true;
         }
 
@@ -58,6 +75,7 @@ namespace Shon
             {
                 if (parameter != null)
                 {
+                    Log(LogLevel.Trace, "Guest implements Start(string parameter).");
                     if (withParam != null)
                     {
                         withParam.Invoke(_payload, new object[] { parameter });
@@ -110,6 +128,5 @@ namespace Shon
             }
         }
 	    #endregion
-
     }
 }

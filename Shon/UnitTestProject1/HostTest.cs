@@ -13,7 +13,6 @@ namespace Shon.Test
     [TestFixture]
     public class HostTest
     {
-//        const string fileHeader = "file:///";
         [Test]
         //basic smoke test
         public void BasicHostTest()
@@ -108,7 +107,7 @@ namespace Shon.Test
             }
         }
 
-        [Test]
+        //[Test]
         public void FinalizerTest()
         {
             object synchro = new object();
