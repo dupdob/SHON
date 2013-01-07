@@ -42,6 +42,11 @@ namespace Shon.TestService
         public void Stop()
         {
             TestTracer.Log("Stop");
+            if (_parameter == "SyncRaiseOnStop")
+            {
+                TestTracer.Log("RaisedException");
+                throw new ApplicationException("Raised on stop");
+            }
         }
 
         public void Dispose()

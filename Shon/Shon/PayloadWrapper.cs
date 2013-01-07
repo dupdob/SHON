@@ -101,8 +101,17 @@ namespace Shon
         public void Stop()
         {
             if (_hasCrashed)
+            {
                 return;
-            InvokePayload("Stop");
+            }
+            try
+            {
+                InvokePayload("Stop");
+            }
+            catch (Exception)
+            {
+                _hasCrashed = true;
+            }
         }
 
         // helper method, call payload method
