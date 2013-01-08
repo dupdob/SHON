@@ -46,6 +46,7 @@ namespace Shon
                 Logging(level, message);
             }
         }
+        
         /// <summary>
         /// Initialize wrapper
         /// </summary>
@@ -60,6 +61,7 @@ namespace Shon
             if (_payload == null)
             {
                 Log(LogLevel.Error, string.Format("Payload failed to create guest instance: {0} from {1}.", className, assemblyName));
+                return false;
             }
             return true;
         }
@@ -71,13 +73,22 @@ namespace Shon
         {
             MethodInfo withParam = _payload.GetType().GetMethod(startName, BindingFlags.Public | BindingFlags.Instance, null, new Type[] { "".GetType() }, null);
             MethodInfo withoutParam = _payload.GetType().GetMethod(startName, BindingFlags.Public | BindingFlags.Instance, null, new Type[] {}, null);
+            if (withoutParam != null)
+            {
+                Log(LogLevel.Trace, "Guest implements Start()");
+            }
+            if (withParam != null)
+            {
+                Log(LogLevel.Trace, "Guest implements Start(string parameter)");
+            }
             try
             {
                 if (parameter != null)
                 {
-                    Log(LogLevel.Trace, "Guest implements Start(string parameter).");
                     if (withParam != null)
                     {
+                        Log(LogLevel.Debug, string.Format("Host calling {0}.Start(\"{1}\")",
+                            _payload.GetType(), parameter ));
                         withParam.Invoke(_payload, new object[] { parameter });
                     }
                     else
@@ -86,6 +97,8 @@ namespace Shon
                 }
                 else
                 {
+                    Log(LogLevel.Debug, string.Format("Host calling {0}.Start()",
+                       _payload.GetType()));
                     withoutParam.Invoke(_payload, null);
                 }
             }
@@ -95,7 +108,7 @@ namespace Shon
             }
         }
 
-        /// <summary>
+         /// <summary>
         /// Stops the instance
         /// </summary>
         public void Stop()
@@ -106,6 +119,7 @@ namespace Shon
             }
             try
             {
+                Log(LogLevel.Trace, "Guest implements Stop()");
                 InvokePayload("Stop");
             }
             catch (Exception)
@@ -127,6 +141,10 @@ namespace Shon
         /// </summary>
         public void Dispose()
         {
+            if (_payload == null)
+            {
+                return;
+            }
             Type disposInterface = _payload.GetType().GetInterface(typeof(IDisposable).FullName);
             if (disposInterface != null)
             {
