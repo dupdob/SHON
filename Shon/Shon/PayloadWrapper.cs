@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Remoting.Lifetime;
@@ -12,8 +13,10 @@ namespace Shon
     {
 #region attributes
         private object _payload;
+        private object _synchro = new object();
         private const string startName = "Start";
         private bool _hasCrashed = false;
+        private List<Tuple<LogLevel, string>> _messages = new List<Tuple<LogLevel, string>>();
 #endregion
         #region attributes
         /// <summary>
@@ -26,10 +29,6 @@ namespace Shon
                 return _hasCrashed;
             }
         }
-        /// <summary>
-        /// Raised for logging
-        /// </summary>
-        public event LogHandler Logging;
         #endregion // attributes
         #region methods
         public PayloadWrapper()
@@ -39,14 +38,6 @@ namespace Shon
             lease.InitialLeaseTime = Timeout.InfiniteTimeSpan;
         }
 
-        private void Log(LogLevel level, string message)
-        {
-            if (Logging != null)
-            {
-                Logging(level, message);
-            }
-        }
-        
         /// <summary>
         /// Initialize wrapper
         /// </summary>
@@ -64,6 +55,15 @@ namespace Shon
                 return false;
             }
             return true;
+        }
+
+        private void Log(LogLevel logLevel, string message)
+        {
+            /// TODO: find a way to send this information back to master app domain
+            lock (_synchro)
+            {
+                _messages.Add(new Tuple<LogLevel, string>(logLevel, message));
+            }
         }
 
         /// <summary>
@@ -154,6 +154,21 @@ namespace Shon
                     _payload, null, CultureInfo.InvariantCulture);
             }
         }
-	    #endregion
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public List<Tuple<LogLevel, string>> PopMessage()
+        {
+            lock (_synchro)
+            {
+                List<Tuple<LogLevel, string>> result = _messages;
+                _messages = new List<Tuple<LogLevel, string>>();
+                return result;
+            }
+        }
+        #endregion
     }
 }

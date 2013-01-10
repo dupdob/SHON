@@ -37,48 +37,11 @@ namespace Shon
         Fatal
     }
 
-    public abstract class aRemoteLogger: MarshalByRefObject
-    {
-        public void Log(LogLevel level, string message)
-        {
-            InternalLog(level, message);
-        }
-        protected abstract void InternalLog(LogLevel level, string message);
-    }
-
-    public class RemoteLogger : aRemoteLogger
-    {
-        public event LogHandler Logging
-        {
-            add {_Logging+=value;}
-            remove {_Logging-=value;}
-        }
-        private event LogHandler _Logging;
-
-        protected override void InternalLog(LogLevel level, string message)
-        {
-            if (_Logging != null)
-            {
-                _Logging(level, message);
-            }
-        }
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="level"></param>
-    /// <param name="message"></param>
-    public delegate void LogHandler(LogLevel level, string message);
     /// <summary>
     /// Implements payload controller for the service
     /// </summary>
     internal interface iPayloadWrapper: IDisposable
     {
-        /// <summary>
-        /// Raised when there is something to log
-        /// </summary>
-        event LogHandler Logging;
-
         /// <summary>
         /// Gets a flag indicating if the guest has crashed, e.g. raised an unhandled exception
         /// </summary>
@@ -100,5 +63,13 @@ namespace Shon
         /// Stops the service
         /// </summary>
         void Stop();
+
+        /// <summary>
+        /// Pop one message
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        List<Tuple<LogLevel, string>> PopMessage();
     }
 }

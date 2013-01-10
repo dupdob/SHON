@@ -1,5 +1,6 @@
 ﻿using log4net;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
@@ -14,7 +15,6 @@ namespace Shon
         private AppDomain _domain;
         private iPayloadWrapper _payload;
         private PayloadDescription _description;
-        private RemoteLogger _rLogger;
         private ILog _logger;
         #endregion
 
@@ -50,13 +50,19 @@ namespace Shon
             _domain=AppDomain.CreateDomain(string.Format(CultureInfo.CurrentCulture, "{0}.{1}", description.Assembly, description.Class), null, setup);
             // creates payload wrapper in charge of interaction with guest
             _payload = (iPayloadWrapper)_domain.CreateInstanceFromAndUnwrap(Path.GetFileName(typeof(PayloadWrapper).Assembly.Location), typeof(PayloadWrapper).FullName);
-            _rLogger = new RemoteLogger();
-            //_payload.Logging += _rLogger.Log;
-            _rLogger.Logging += Log;
             _payload.Initialize(description.Assembly, _description.Class);
+            LogCapture();
             return true;
         }
 
+        private void LogCapture()
+        {
+            List<Tuple<LogLevel, string>> messages = _payload.PopMessage();
+            foreach(Tuple<LogLevel, string> message in messages)
+            {
+                Log(message.Item1, message.Item2);
+            }
+        }
         // logging handler
         public void Log(LogLevel level, string message)
         {
@@ -114,6 +120,7 @@ namespace Shon
                 {
                     // dispose payloadwrapper
                     _payload.Dispose();
+                    LogCapture();
                     // unload appdomain
                     AppDomain.Unload(_domain);
                 }
@@ -126,6 +133,7 @@ namespace Shon
         public void Start()
         {
             _payload.Start(_description.Parameter);
+            LogCapture();
         }
 
         /// <summary>
@@ -134,6 +142,7 @@ namespace Shon
         public void Stop()
         {
             _payload.Stop();
+            LogCapture();
         }
         #endregion
 
