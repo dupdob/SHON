@@ -11,14 +11,14 @@ namespace Shon
     /// </summary>
     internal sealed class PayloadWrapper : MarshalByRefObject, iPayloadWrapper
     {
-#region attributes
+        #region attributes
         private object _payload;
         private object _synchro = new object();
         private const string startName = "Start";
         private bool _hasCrashed = false;
         private List<Tuple<LogLevel, string>> _messages = new List<Tuple<LogLevel, string>>();
-#endregion
-        #region attributes
+        #endregion
+        #region properties
         /// <summary>
         /// 
         /// </summary>
@@ -59,7 +59,7 @@ namespace Shon
 
         private void Log(LogLevel logLevel, string message)
         {
-            /// TODO: find a way to send this information back to master app domain
+            /// TODO: find a better way to send this information back to master app domain
             lock (_synchro)
             {
                 _messages.Add(new Tuple<LogLevel, string>(logLevel, message));

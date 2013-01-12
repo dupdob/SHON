@@ -16,7 +16,7 @@ namespace Shon
         private iPayloadWrapper _payload;
         private PayloadDescription _description;
         private ILog _logger;
-        #endregion
+        #endregion  
 
         #region properties
         /// <summary>

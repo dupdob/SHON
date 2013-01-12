@@ -132,7 +132,8 @@ namespace Shon.Test
             }
         }
 
-        //[Test]
+        [Test]
+        [Explicit]
         public void FinalizerTest()
         {
             object synchro = new object();
