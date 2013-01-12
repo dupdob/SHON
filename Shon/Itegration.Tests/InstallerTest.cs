@@ -36,6 +36,10 @@ namespace Shon.Test
                             break;
                         }
                     }
+                    catch
+                    {
+                        // exception is raised if service not ready
+                    }
                     finally
                     {
                         controler.Dispose();
