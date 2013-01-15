@@ -9,55 +9,47 @@ namespace Shon.Test
     [TestFixture]
     public class InstallerTest
     {
-        [Test]
-        public void BasicInstallTest()
+        [TestFixtureSetUp]
+        public void Install()
         {
             ServiceController controler;
-            try
+            ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", "shon.exe");
+            start.UseShellExecute = false;
+            using (Process process = Process.Start(start))
             {
-                ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", "shon.exe");
-                start.UseShellExecute = false;
-                using (Process process = Process.Start(start))
-                {
-                    // run install
-                }
-                // sleep to ensure status is propagated
-                Stopwatch watch = new Stopwatch();
-                watch.Start();
-                while (watch.ElapsedMilliseconds < 1000)
-
-                {
-                    Thread.Sleep(100);
-                    controler = new ServiceController("toto");
-                    try
-                    {
-                        if (ServiceControllerStatus.Stopped == controler.Status)
-                        {
-                            break;
-                        }
-                    }
-                    catch
-                    {
-                        // exception is raised if service not ready
-                    }
-                    finally
-                    {
-                        controler.Dispose();
-                    }
-                }
+                // run install
+            }
+            // sleep to ensure status is propagated
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            while (watch.ElapsedMilliseconds < 1000)
+            {
+                Thread.Sleep(50);
                 controler = new ServiceController("toto");
                 try
                 {
-                    Assert.AreEqual(ServiceControllerStatus.Stopped, controler.Status);
+                    if (ServiceControllerStatus.Stopped == controler.Status)
+                    {
+                        break;
+                    }
                 }
                 catch
                 {
-                    Assert.Fail("Service not found, installation failed");
+                    // exception is raised if service not ready
                 }
                 finally
                 {
                     controler.Dispose();
                 }
+            }
+        }
+        [TestFixtureTearDown]
+        public void TearDown()
+        {
+           ServiceController controler;
+            controler = new ServiceController("toto");
+            try
+            {
             }
             finally
             {
@@ -78,6 +70,24 @@ namespace Shon.Test
             {
             }
 
+        }
+        [Test(Description = "Check service starts")]
+        public void StartTest()
+        {
+            ServiceController controler;
+            controler = new ServiceController("toto");
+            Assert.AreEqual(ServiceControllerStatus.Stopped, controler.Status, "Service should be stopped");
+            controler.Start();
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            while (watch.ElapsedMilliseconds < 1000)
+            {
+                controler.Refresh();
+                if (controler.Status == ServiceControllerStatus.Running)
+                    break;
+                Thread.Sleep(50);
+            }
+            Assert.AreEqual(ServiceControllerStatus.Running, controler.Status, "Service should be running");
         }
     }
 }

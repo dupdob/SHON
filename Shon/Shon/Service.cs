@@ -11,9 +11,11 @@ namespace Shon
 {
     public partial class Service : ServiceBase
     {
+        private Host _host;
         public Service()
         {
             this.ServiceName = "toto";
+            _host = new Host();
             InitializeComponent();
         }
 
