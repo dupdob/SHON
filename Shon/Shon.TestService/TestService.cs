@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Shon.TestService
 {
@@ -13,6 +14,15 @@ namespace Shon.TestService
     public class TestService: IDisposable
     {
         private string _parameter;
+        private bool _crashOnRun = false;
+        private int _wait = 100;
+        private Thread _worker;
+        private readonly object _synchro = new object();
+
+        public TestService()
+        {
+            _worker = new Thread(Run);
+        }
         public void Start()
         {
             TestTracer.Log("Start");
@@ -20,7 +30,6 @@ namespace Shon.TestService
                 ConfigurationManager.OpenExeConfiguration(
                 ConfigurationUserLevel.None);
             TestTracer.Log(config.AppSettings.Settings["Demo"].Value);
-
         }
 
         public void Start(string param)
@@ -37,6 +46,11 @@ namespace Shon.TestService
                 TestTracer.Log("RaisedException");
                 throw new ApplicationException("Raised on start");
             }
+            if (_parameter == "AsyncRaiseOnRun")
+            {
+                _crashOnRun = true;
+            }
+            _worker.Start();
         }
 
         public void Stop()
@@ -49,9 +63,19 @@ namespace Shon.TestService
             }
         }
 
+        private void Run()
+        {
+            if (_crashOnRun)
+            {
+                Thread.Sleep(_wait);
+                TestTracer.Log("RaisedException");
+                throw new ApplicationException("Raised on run");
+            }
+        }
         public void Dispose()
         {
             TestTracer.Log("Dispose");
+
         }
     }
 
