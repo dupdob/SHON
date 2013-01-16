@@ -47,6 +47,7 @@ namespace Shon
         public bool Initialize(string assemblyName, string className)
         {
             Log(LogLevel.Debug, string.Format("Payload creates guest instance: {0} from {1}.", className, assemblyName));
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             // instantiate guest object
             _payload = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(assemblyName, className);
             if (_payload == null)
@@ -55,6 +56,25 @@ namespace Shon
                 return false;
             }
             return true;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            string message;
+            Exception ex = e.ExceptionObject as Exception;
+            if (ex == null)
+            {
+                message = "unmanaged exception";
+                if (e.ExceptionObject != null)
+                {
+                    message += " "+e.ExceptionObject.ToString();
+                }
+            }
+            else
+            {
+                message = string.Format("{0} '{2}', {3}", ex.GetType().Name, ex.Source, ex.Message, ex.StackTrace);
+            }
+            Log(LogLevel.Fatal, string.Format("Guest unhandled exception: {0}.", message));
         }
 
         private void Log(LogLevel logLevel, string message)
@@ -93,6 +113,8 @@ namespace Shon
                     }
                     else
                     {
+                        Log(LogLevel.Fatal, string.Format("Guest does not implement Start(string parameter), start failed",
+                            _payload.GetType(), parameter));
                     }
                 }
                 else

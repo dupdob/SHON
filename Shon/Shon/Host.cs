@@ -63,6 +63,7 @@ namespace Shon
                 Log(message.Item1, message.Item2);
             }
         }
+
         // logging handler
         public void Log(LogLevel level, string message)
         {

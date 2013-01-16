@@ -1,18 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using Shon.TestService;
 using NUnit.Framework;
 using System.IO;
 using System.Threading;
+using log4net;
 namespace Shon.Test
 {
     [TestFixture]
     public class HostTest
     {
+        [TestFixtureSetUp]
+        public void Setup()
+        {
+            log4net.Appender.TraceAppender appender = new log4net.Appender.TraceAppender();
+            appender.Layout = new log4net.Layout.PatternLayout("%message");
+            log4net.Config.BasicConfigurator.Configure();
+        }
+        [TestFixtureTearDown]
+        public void TearDown()
+        {
+            log4net.LogManager.Shutdown();
+        }
         [Test]
         //basic smoke test
         public void BasicHostTest()
