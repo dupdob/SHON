@@ -22,7 +22,7 @@ namespace Shon.Test
                 assembly = new Uri(assembly).AbsolutePath;
                 assembly = assembly.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             }
-            desc.Assembly = Path.GetFileName(assembly);
+            desc.AssemblyFullName = Path.GetFileName(assembly);
             desc.Class = typeof(HostTest).FullName;
             Assert.AreEqual(assembly+".config", desc.ConfigurationFile, "Config file should match default name");
             Assert.AreEqual(Path.GetDirectoryName(assembly), desc.BinaryFolder, "binary folder should be assembly folder");
@@ -35,7 +35,7 @@ namespace Shon.Test
             {
                 PayloadDescription desc = new PayloadDescription();
                 string assembly = Assembly.GetExecutingAssembly().Location;
-                desc.Assembly = assembly;
+                desc.AssemblyFullName = assembly;
                 desc.Class = typeof(HostTest).FullName;
                 File.Delete(filename);
                 PayloadDescription.Save(desc, filename);
@@ -54,7 +54,7 @@ namespace Shon.Test
             string filename = "testfile.xml";
             PayloadDescription desc = new PayloadDescription();
             string assembly = Assembly.GetExecutingAssembly().Location;
-            desc.Assembly = assembly;
+            desc.AssemblyFullName = assembly;
             desc.Class = typeof(HostTest).FullName;
             desc=PayloadDescription.Load(filename);
 

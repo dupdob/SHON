@@ -23,6 +23,7 @@ namespace Shon.TestService
         {
             _worker = new Thread(Run);
         }
+
         public void Start()
         {
             TestTracer.Log("Start");
@@ -72,10 +73,10 @@ namespace Shon.TestService
                 throw new ApplicationException("Raised on run");
             }
         }
+
         public void Dispose()
         {
             TestTracer.Log("Dispose");
-
         }
     }
 

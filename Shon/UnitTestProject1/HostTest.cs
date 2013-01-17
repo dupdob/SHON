@@ -29,7 +29,7 @@ namespace Shon.Test
             using (Host test = new Host())
             {
                 PayloadDescription desc = new PayloadDescription();
-                desc.Assembly = Assembly.GetExecutingAssembly().Location;
+                desc.AssemblyFullName = Assembly.GetExecutingAssembly().Location;
                 desc.Class = typeof(HostTest).FullName;
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
             }
@@ -43,7 +43,7 @@ namespace Shon.Test
             {
                 PayloadDescription desc = new PayloadDescription();
                 string assembly = typeof(TestService.TestService).Assembly.CodeBase;
-                desc.Assembly = assembly;
+                desc.AssemblyFullName = assembly;
                 desc.Class = typeof(TestService.TestService).FullName;
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
                 using (TestTracer tracer = TestTracer.FromDomain(test.Domain))
@@ -71,7 +71,7 @@ namespace Shon.Test
             {
                 PayloadDescription desc = new PayloadDescription();
                 string assembly = typeof(TestService.TestService).Assembly.CodeBase;
-                desc.Assembly = assembly;
+                desc.AssemblyFullName = assembly;
                 desc.Class = typeof(TestService.TestService).FullName;
                 desc.Parameter = "SyncRaiseOnStart";
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
@@ -96,7 +96,7 @@ namespace Shon.Test
             {
                 PayloadDescription desc = new PayloadDescription();
                 string assembly = typeof(TestService.TestService).Assembly.CodeBase;
-                desc.Assembly = assembly;
+                desc.AssemblyFullName = assembly;
                 desc.Class = typeof(TestService.TestService).FullName;
                 desc.Parameter = "SyncRaiseOnStop";
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
@@ -122,7 +122,7 @@ namespace Shon.Test
             {
                 PayloadDescription desc = new PayloadDescription();
                 string assembly = typeof(TestService.TestService).Assembly.CodeBase;
-                desc.Assembly = assembly;
+                desc.AssemblyFullName = assembly;
                 desc.Class = typeof(TestService.TestService).FullName;
                 desc.Parameter = "AsyncRaiseOnRun";
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
@@ -148,7 +148,7 @@ namespace Shon.Test
             {
                 PayloadDescription desc = new PayloadDescription();
                 string assembly = typeof(TestService.TestService).Assembly.CodeBase;
-                desc.Assembly = assembly;
+                desc.AssemblyFullName = assembly;
                 desc.Class = typeof(TestService.TestService).FullName;
                 desc.ConfigurationFile =Path.GetFullPath("AltShon.TestService.config");
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
@@ -175,7 +175,7 @@ namespace Shon.Test
             bool done = false;
             Host test = new Host();
             PayloadDescription desc = new PayloadDescription();
-            desc.Assembly = typeof(TestService.TestService).Assembly.Location;
+            desc.AssemblyFullName = typeof(TestService.TestService).Assembly.Location;
             desc.Class = typeof(TestService.TestService).FullName;
             desc.ConfigurationFile = "AltShon.TestService.config";
             Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");

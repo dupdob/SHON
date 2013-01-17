@@ -27,7 +27,7 @@ namespace Shon
         /// <summary>
         /// Assembly name
         /// </summary>
-        public string Assembly
+        public string AssemblyFullName
         {
             get
             {
@@ -51,6 +51,26 @@ namespace Shon
             }
         }
 
+        public string AssemblyFileName
+        {
+            get
+            {
+                string assembly = AssemblyFullName;
+                int lastSlash = assembly.LastIndexOf('/');
+                if (lastSlash == -1)
+                {
+                    return assembly;
+                }
+                else
+                {
+                    return assembly.Substring(lastSlash + 1);
+                }
+            }
+        }
+        /// <summary>
+        /// Parameter used to start guest
+        /// </summary>
+        public string Parameter { get; set; }
         /// <summary>
         /// Class name hosting the service
         /// </summary>
@@ -114,7 +134,7 @@ namespace Shon
             {
                 if (this._configFile == null)
                 {
-                    return Assembly+".config";
+                    return AssemblyFullName+".config";
                 }
                 else
                 {
@@ -127,6 +147,7 @@ namespace Shon
             }
         }
         #endregion
+
         #region methods
         /// <summary>
         /// Load a XML configuration file
@@ -157,7 +178,5 @@ namespace Shon
         }
         #endregion
 
-
-        public string Parameter { get; set; }
     }
 }

@@ -43,14 +43,14 @@ namespace Shon
                 throw new ArgumentNullException("description");
             }
             _description = description;
-            _logger = LogManager.GetLogger(string.Format("Host.{0}.{1}", _description.Assembly, _description.Class));
+            _logger = LogManager.GetLogger(string.Format("Host[{0}]{1}", _description.AssemblyFileName, _description.Class));
             // work the creation of the appomain
             setup.ApplicationBase = description.BinaryFolder;
             setup.ConfigurationFile = description.ConfigurationFile;
-            _domain=AppDomain.CreateDomain(string.Format(CultureInfo.CurrentCulture, "{0}.{1}", description.Assembly, description.Class), null, setup);
+            _domain=AppDomain.CreateDomain(string.Format(CultureInfo.CurrentCulture, "{0}.{1}", description.AssemblyFullName, description.Class), null, setup);
             // creates payload wrapper in charge of interaction with guest
             _payload = (iPayloadWrapper)_domain.CreateInstanceFromAndUnwrap(Path.GetFileName(typeof(PayloadWrapper).Assembly.Location), typeof(PayloadWrapper).FullName);
-            _payload.Initialize(description.Assembly, _description.Class);
+            _payload.Initialize(description.AssemblyFullName, _description.Class);
             LogCapture();
             return true;
         }
