@@ -76,7 +76,11 @@ namespace Shon.Test
         {
             ServiceController controler;
             controler = new ServiceController("toto");
-            Assert.AreEqual(ServiceControllerStatus.Stopped, controler.Status, "Service should be stopped");
+            if (controler.Status == ServiceControllerStatus.Running)
+            {
+                controler.Stop();
+                Thread.Sleep(2000);
+            }
             controler.Start();
             Stopwatch watch = new Stopwatch();
             watch.Start();

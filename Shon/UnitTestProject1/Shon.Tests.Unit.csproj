@@ -63,6 +63,7 @@
     <Compile Include="RedirectionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InstallerTest.cs" />
+    <Compile Include="TestCommandLineParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shon.TestService\Shon.TestService.csproj">

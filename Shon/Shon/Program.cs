@@ -12,7 +12,7 @@ namespace Shon
         /// <summary>
         /// Point d'entrée principal de l'application.
         /// </summary>
-        static void Main()
+        static void Main(string[] args)
         {
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[] 

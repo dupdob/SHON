@@ -29,7 +29,7 @@ namespace Shon.Test
             using (Host test = new Host())
             {
                 PayloadDescription desc = new PayloadDescription();
-                desc.AssemblyFullName = Assembly.GetExecutingAssembly().Location;
+                desc.AssemblyFullName = typeof(HostTest).Assembly.Location;
                 desc.Class = typeof(HostTest).FullName;
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
             }
@@ -57,7 +57,7 @@ namespace Shon.Test
 
                     Assert.AreEqual("Stop", tracer.Pop(), "TestMethod.Stop should have been called");
 
-                    tracer.AssertEmpty();
+                    Assert.IsTrue(tracer.IsEmpty, "No other events should have occured");
                 }
             }
 
@@ -83,7 +83,7 @@ namespace Shon.Test
                     Assert.AreEqual("Default", tracer.Pop(), "Bad test parameter");
 
                     Assert.AreEqual("RaisedException", tracer.Pop(), "Should have raised an exception");
-                    tracer.AssertEmpty();
+                    Assert.IsTrue(tracer.IsEmpty, "No other events should have occured");
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace Shon.Test
                     test.Stop();
                     Assert.AreEqual("Stop", tracer.Pop(), "Should have raised an exception");
                     Assert.AreEqual("RaisedException", tracer.Pop(), "Should have raised an exception");
-                    tracer.AssertEmpty();
+                    Assert.IsTrue(tracer.IsEmpty, "No other events should have occured");
                 }
             }
         }
@@ -135,7 +135,7 @@ namespace Shon.Test
                     Assert.AreEqual("RaisedException", tracer.Pop(), "Should have raised an exception");
                     test.Stop();
                     Assert.AreEqual("Stop", tracer.Pop(), "Should have raised an exception");
-                    tracer.AssertEmpty();
+                    Assert.IsTrue(tracer.IsEmpty, "No other events should have occured");
                 }
             }
         }
@@ -150,7 +150,7 @@ namespace Shon.Test
                 string assembly = typeof(TestService.TestService).Assembly.CodeBase;
                 desc.AssemblyFullName = assembly;
                 desc.Class = typeof(TestService.TestService).FullName;
-                desc.ConfigurationFile =Path.GetFullPath("AltShon.TestService.config");
+                desc.ConfigurationFile = "AltShon.TestService.config";
                 Assert.IsTrue(test.Initialize(desc), "Initialize must succeed");
                 using (TestTracer tracer = TestTracer.FromDomain(test.Domain))
                 {
@@ -162,7 +162,7 @@ namespace Shon.Test
                     test.Stop();
 
                     Assert.AreEqual("Stop", tracer.Pop(), "TestMethod.Stop should have been called");
-                    tracer.AssertEmpty();
+                    Assert.IsTrue(tracer.IsEmpty, "No other events should have occured");
                 }
             }
         }

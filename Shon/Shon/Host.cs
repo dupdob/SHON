@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 
 namespace Shon
 {
@@ -44,12 +45,16 @@ namespace Shon
             }
             _description = description;
             _logger = LogManager.GetLogger(string.Format("Host[{0}]{1}", _description.AssemblyFileName, _description.Class));
+            // debugger info
+            _logger.DebugFormat("My base: {0}", AppDomain.CurrentDomain.SetupInformation.ApplicationBase);
+            _logger.DebugFormat("My shadow: {0}", AppDomain.CurrentDomain.SetupInformation.ShadowCopyDirectories);
+            _logger.DebugFormat("My assembly: {0}", Assembly.GetExecutingAssembly().Location);
             // work the creation of the appomain
             setup.ApplicationBase = description.BinaryFolder;
             setup.ConfigurationFile = description.ConfigurationFile;
             _domain=AppDomain.CreateDomain(string.Format(CultureInfo.CurrentCulture, "{0}.{1}", description.AssemblyFullName, description.Class), null, setup);
             // creates payload wrapper in charge of interaction with guest
-            _payload = (iPayloadWrapper)_domain.CreateInstanceFromAndUnwrap(Path.GetFileName(typeof(PayloadWrapper).Assembly.Location), typeof(PayloadWrapper).FullName);
+            _payload = (iPayloadWrapper)_domain.CreateInstanceFromAndUnwrap(/*Path.GetFileName(*/typeof(PayloadWrapper).Assembly.Location, typeof(PayloadWrapper).FullName);
             _payload.Initialize(description.AssemblyFullName, _description.Class);
             LogCapture();
             return true;

@@ -92,7 +92,14 @@ namespace Shon
                     {
                         // this is an URI, not a filename
                         Uri uri = new Uri(_assembly);
-                        result=uri.GetComponents(UriComponents.Path, UriFormat.UriEscaped);
+                        if (uri.Scheme == Uri.UriSchemeFile)
+                        {
+                            result = Path.GetDirectoryName(uri.PathAndQuery);
+                        }
+                        else
+                        {
+                            result = uri.GetComponents(UriComponents.Path, UriFormat.UriEscaped);
+                        }
                     }
                     else
                     {

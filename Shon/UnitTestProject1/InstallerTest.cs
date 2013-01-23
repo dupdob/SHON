@@ -15,7 +15,8 @@ namespace Shon.Test
             ServiceController controler;
             try
             {
-                ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", "shon.exe");
+                string assembly = typeof(Host).Assembly.CodeBase;
+                ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", assembly);
                 start.UseShellExecute = false;
                 using (Process process = Process.Start(start))
                 {

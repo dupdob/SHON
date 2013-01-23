@@ -1,9 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shon.TestService
 {
@@ -20,6 +17,7 @@ namespace Shon.TestService
         {
             return (TestTracer)domain.CreateInstanceFromAndUnwrap(typeof(TestTracer).Assembly.CodeBase, typeof(TestTracer).FullName);
         }
+
         public string Pop()
         {
             if (storage.Count == 0)
@@ -36,15 +34,11 @@ namespace Shon.TestService
             storage.Clear();
         }
 
-        public void AssertEmpty()
+        public bool IsEmpty
         {
-            try
+            get
             {
-                Assert.AreEqual(0, storage.Count, "storage should be empty");
-            }
-            finally
-            {
-                Reset();
+               return storage.Count==0;
             }
         }
         public void Dispose()
