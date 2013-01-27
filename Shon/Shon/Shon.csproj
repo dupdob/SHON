@@ -48,6 +48,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineParser.cs" />
     <Compile Include="ErrorRedirection.cs" />
     <Compile Include="IPayloadWrapper.cs" />
     <Compile Include="PayloadDescription.cs" />
