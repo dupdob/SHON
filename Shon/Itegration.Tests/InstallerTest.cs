@@ -12,8 +12,13 @@ namespace Shon.Test
         [TestFixtureSetUp]
         public void Install()
         {
+            string file = typeof(Shon.Host).Assembly.Location;
             ServiceController controler;
-            ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", "shon.exe");
+            if (file.Contains(" "))
+            {
+                file = '"' + file + '"';
+            }
+            ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", file);
             start.UseShellExecute = false;
             using (Process process = Process.Start(start))
             {
@@ -24,13 +29,18 @@ namespace Shon.Test
             watch.Start();
             while (watch.ElapsedMilliseconds < 1000)
             {
-                Thread.Sleep(50);
                 controler = new ServiceController("toto");
+                Thread.Sleep(50);
+                controler.Refresh();
                 try
                 {
                     if (ServiceControllerStatus.Stopped == controler.Status)
                     {
                         break;
+                    }
+                    if (ServiceControllerStatus.Running == controler.Status)
+                    {
+                        controler.Stop();
                     }
                 }
                 catch
@@ -42,6 +52,8 @@ namespace Shon.Test
                     controler.Dispose();
                 }
             }
+            controler = new ServiceController("toto");
+            Assert.AreEqual(ServiceControllerStatus.Stopped, controler.Status);
         }
         [TestFixtureTearDown]
         public void TearDown()
@@ -53,7 +65,8 @@ namespace Shon.Test
             }
             finally
             {
-                ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", "/uninstall shon.exe");
+                string file = typeof(Shon.Host).Assembly.Location;
+                ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", "/uninstall "+file);
                 start.UseShellExecute = false;
                 using (Process process = Process.Start(start))
                 {

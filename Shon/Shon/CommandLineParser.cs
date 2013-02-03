@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace Shon
 {
-    public class CommandLineParser
+    /// <summary>
+    /// Command line analyzing class
+    /// </summary>
+     public class CommandLineParser
     {
         private List<string> _values;
         private List<string> _commands;
         private Dictionary<string, string> _namedValues;
         private List<string> _valuesId;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="commandLine"></param>
+    /// <summary>
+    /// Default contructor
+    /// </summary>
         public CommandLineParser()
         {
             _values = new List<string>();
@@ -24,10 +26,12 @@ namespace Shon
             _commands = new List<string>();
             _valuesId = new List<string>();
         }
-
+        /// <summary>
+        /// Parse the command line arguments
+        /// </summary>
+        /// <param name="commandLine">commandline, expressed as an aray of string.</param>
         public void Parse(string[] commandLine)
         {
-
             for (int i = 0; i < commandLine.Length; i++)
             {
                 string command = commandLine[i];
@@ -78,6 +82,42 @@ namespace Shon
                 throw new InvalidOperationException("Cannot register the same option twice");
             }
             _valuesId.Add(param); ;
+        }
+
+        /// <summary>
+        /// Gets the named option value
+        /// </summary>
+        /// <param name="param">The param.</param>
+        /// <returns>Parameter value</returns>
+        public string GetNamedOption(string param)
+        {
+            return _namedValues[param];
+        }
+
+        /// <summary>
+        /// Gets the anonymous values.
+        /// </summary>
+        /// <value>
+        /// The values.
+        /// </value>
+        public IList<string> Values
+        {
+            get
+            {
+                return _values;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the specified command is active.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified command is active; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsActive(string command)
+        {
+            return _commands.Contains(command);
         }
     }
 }

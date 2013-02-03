@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
+using System.Configuration.Install;
 using System.IO;
 using System.Reflection;
 using System.Security.AccessControl;
@@ -28,6 +30,59 @@ namespace Shon
             Installers.Add(_serviceInstaller);
             InitializeComponent();
         }
+
+        protected override void OnBeforeInstall(System.Collections.IDictionary savedState)
+        {
+            base.OnBeforeInstall(savedState);
+        }
+
+        private static void InstallService()
+        {
+                 using (AssemblyInstaller installer = GetInstaller())
+                {
+                    IDictionary state = new Hashtable();
+                    try
+                    {
+                        installer.Install(state);
+                        installer.Commit(state);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            installer.Rollback(state);
+                        }
+                        catch
+                        {
+                        }
+                        throw;
+                    }
+                }
+        }
+
+        private static AssemblyInstaller GetInstaller()
+        {
+            AssemblyInstaller installer = new AssemblyInstaller(
+                typeof(Service).Assembly, null);
+            installer.UseNewContext = true;
+            return installer;
+        }
+
+        private static void UninstallService()
+        {
+                 using (AssemblyInstaller installer = GetInstaller())
+                {
+                    IDictionary state = new Hashtable();
+                    try
+                    {
+                        installer.Uninstall(state);
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                }
+      }
 
     }
 }

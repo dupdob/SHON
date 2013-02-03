@@ -45,11 +45,7 @@ namespace Shon
             }
             _description = description;
             _logger = LogManager.GetLogger(string.Format("Host[{0}]{1}", _description.AssemblyFileName, _description.Class));
-            // debugger info
-            _logger.DebugFormat("My base: {0}", AppDomain.CurrentDomain.SetupInformation.ApplicationBase);
-            _logger.DebugFormat("My shadow: {0}", AppDomain.CurrentDomain.SetupInformation.ShadowCopyDirectories);
-            _logger.DebugFormat("My assembly: {0}", Assembly.GetExecutingAssembly().Location);
-            // work the creation of the appomain
+           // work the creation of the appomain
             setup.ApplicationBase = description.BinaryFolder;
             setup.ConfigurationFile = description.ConfigurationFile;
             _domain=AppDomain.CreateDomain(string.Format(CultureInfo.CurrentCulture, "{0}.{1}", description.AssemblyFullName, description.Class), null, setup);
