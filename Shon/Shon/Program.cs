@@ -14,12 +14,29 @@ namespace Shon
         /// </summary>
         static void Main(string[] args)
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[] 
-            { 
-                new Service() 
-            };
-            ServiceBase.Run(ServicesToRun);
+            bool runService = true;
+            CommandLineParser parser = new CommandLineParser();
+            parser.Parse(args);
+
+            if (parser.IsActive("install"))
+            {
+                ShonInstaller.InstallService();
+                runService = false;
+            }
+            if (parser.IsActive("uninstall"))
+            {
+                ShonInstaller.UninstallService();
+                runService = false;
+            }
+            if (runService)
+            {
+                ServiceBase[] ServicesToRun;
+                ServicesToRun = new ServiceBase[] 
+                { 
+                    new Service() 
+                };
+                ServiceBase.Run(ServicesToRun);
+            }
         }
     }
 }

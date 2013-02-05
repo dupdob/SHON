@@ -36,7 +36,10 @@ namespace Shon
             base.OnBeforeInstall(savedState);
         }
 
-        private static void InstallService()
+        /// <summary>
+        /// Installs the service
+        /// </summary>
+        public static void InstallService()
         {
                  using (AssemblyInstaller installer = GetInstaller())
                 {
@@ -68,7 +71,10 @@ namespace Shon
             return installer;
         }
 
-        private static void UninstallService()
+        /// <summary>
+        /// Uninstall the service
+        /// </summary>
+        public static void UninstallService()
         {
                  using (AssemblyInstaller installer = GetInstaller())
                 {

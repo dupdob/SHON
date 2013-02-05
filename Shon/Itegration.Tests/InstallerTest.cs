@@ -7,18 +7,19 @@ using System.Threading;
 namespace Shon.Test
 {
     [TestFixture]
-    public class InstallerTest
+    public class InstallationTest
     {
         [TestFixtureSetUp]
         public void Install()
         {
-            string file = typeof(Shon.Host).Assembly.Location;
             ServiceController controler;
+            string file = typeof(Shon.Host).Assembly.Location;
             if (file.Contains(" "))
             {
                 file = '"' + file + '"';
             }
-            ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", file);
+//            ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", file);
+            ProcessStartInfo start = new ProcessStartInfo(file, "/install");
             start.UseShellExecute = false;
             using (Process process = Process.Start(start))
             {
@@ -84,6 +85,7 @@ namespace Shon.Test
             }
 
         }
+
         [Test(Description = "Check service starts")]
         public void StartTest()
         {
