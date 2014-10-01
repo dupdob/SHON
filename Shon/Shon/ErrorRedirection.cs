@@ -159,7 +159,7 @@ namespace Shon
             GC.SuppressFinalize(this);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_logFile"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_outputWriter")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_server"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_logFile"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_outputWriter")]
         private void Dispose(bool disposing)
         {
             // restore
@@ -182,7 +182,7 @@ namespace Shon
                     _errorWriter = null;
                 }
                 // stop the windows error redirection pipes
-                lock (this._synchro)
+                lock (_synchro)
                 {
                     if (!_closed)
                     {

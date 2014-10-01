@@ -14,16 +14,8 @@ namespace Shon.Test
         {
             ServiceController controler;
             try
-            {
-                /*string assembly = typeof(Host).Assembly.CodeBase;
-                ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", assembly);
-                start.UseShellExecute = false;
-                using (Process process = Process.Start(start))
-                {
-                    // run install
-                }
-                 * */
-                ShonInstaller.InstallService();
+            { 
+                ShonInstaller.InstallService("toto");
                 // sleep to ensure status is propagated
                 Stopwatch watch = new Stopwatch();
                 while (watch.ElapsedMilliseconds < 1000)
@@ -61,17 +53,7 @@ namespace Shon.Test
             }
             finally
             {
-                 string file = typeof(Shon.Host).Assembly.Location;
-                if (file.Contains(" "))
-                {
-                    file = '"' + file + '"';
-                }
-              ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", "/uninstall "+file);
-                start.UseShellExecute = false;
-                using (Process process = Process.Start(start))
-                {
-                    // run install
-                }
+                ShonInstaller.UninstallService("toto");
             }
             Thread.Sleep(100);
             try

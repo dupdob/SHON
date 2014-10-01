@@ -19,31 +19,42 @@ namespace Shon
         {
             _processInstaller = new ServiceProcessInstaller();
             _serviceInstaller = new ServiceInstaller();
-
-            _processInstaller.Account = ServiceAccount.LocalSystem;
-            _processInstaller.Username = null;
-            _processInstaller.Password = null;
-
-            _serviceInstaller.ServiceName = "toto";
-
             Installers.Add(_processInstaller);
             Installers.Add(_serviceInstaller);
             InitializeComponent();
         }
 
+        public void Init(IDictionary savedState)
+        {
+            _processInstaller.Account = ServiceAccount.LocalSystem;
+            _processInstaller.Username = null;
+            _processInstaller.Password = null;
+
+            _serviceInstaller.ServiceName = (string) savedState["ServiceName"];
+
+        }
+
         protected override void OnBeforeInstall(System.Collections.IDictionary savedState)
         {
+            Init(savedState);
             base.OnBeforeInstall(savedState);
+        }
+
+        protected override void OnBeforeUninstall(IDictionary savedState)
+        {
+            Init(savedState);
+            base.OnBeforeUninstall(savedState);
         }
 
         /// <summary>
         /// Installs the service
         /// </summary>
-        public static void InstallService()
+        public static void InstallService(string serviceName)
         {
                  using (AssemblyInstaller installer = GetInstaller())
                 {
                     IDictionary state = new Hashtable();
+                    state["ServiceName"] = serviceName;
                     try
                     {
                         installer.Install(state);
@@ -74,11 +85,12 @@ namespace Shon
         /// <summary>
         /// Uninstall the service
         /// </summary>
-        public static void UninstallService()
+        public static void UninstallService(string serviceName)
         {
                  using (AssemblyInstaller installer = GetInstaller())
                 {
                     IDictionary state = new Hashtable();
+                    state["ServiceName"] = serviceName;
                     try
                     {
                         installer.Uninstall(state);

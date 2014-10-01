@@ -20,12 +20,12 @@ namespace Shon
 
             if (parser.IsActive("install"))
             {
-                ShonInstaller.InstallService();
+                ShonInstaller.InstallService("toto");
                 runService = false;
             }
             if (parser.IsActive("uninstall"))
             {
-                ShonInstaller.UninstallService();
+                ShonInstaller.UninstallService("toto");
                 runService = false;
             }
             if (runService)

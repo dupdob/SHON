@@ -18,7 +18,6 @@ namespace Shon.Test
             {
                 file = '"' + file + '"';
             }
-//            ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", file);
             ProcessStartInfo start = new ProcessStartInfo(file, "/install");
             start.UseShellExecute = false;
             using (Process process = Process.Start(start))

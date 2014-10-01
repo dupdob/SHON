@@ -33,5 +33,8 @@
     <NamedTestSelector>
       <TestName>Shon.Test.InstallerTest.BasicInstallTest</TestName>
     </NamedTestSelector>
+    <NamedTestSelector>
+      <TestName>Shon.Test.InstallationTest.StartTest</TestName>
+    </NamedTestSelector>
   </IgnoredTests>
 </ProjectConfiguration>

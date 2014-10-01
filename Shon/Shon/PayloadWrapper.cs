@@ -46,13 +46,13 @@ namespace Shon
         /// <returns></returns>
         public bool Initialize(string assemblyName, string className)
         {
-            Log(LogLevel.Debug, string.Format("Payload creates guest instance: {0} from {1}.", className, assemblyName));
+            Log(LogLevel.Debug, string.Format(CultureInfo.InvariantCulture, "Payload creates guest instance: {0} from {1}.", className, assemblyName));
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             // instantiate guest object
             _payload = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(assemblyName, className);
             if (_payload == null)
             {
-                Log(LogLevel.Error, string.Format("Payload failed to create guest instance: {0} from {1}.", className, assemblyName));
+                Log(LogLevel.Error, string.Format(CultureInfo.InvariantCulture, "Payload failed to create guest instance: {0} from {1}.", className, assemblyName));
                 return false;
             }
             return true;
@@ -72,9 +72,9 @@ namespace Shon
             }
             else
             {
-                message = string.Format("{0} '{2}', {3}", ex.GetType().Name, ex.Source, ex.Message, ex.StackTrace);
+                message = string.Format(CultureInfo.InvariantCulture, "{0} '{1}', {2}", ex.GetType().Name, ex.Message, ex.StackTrace);
             }
-            Log(LogLevel.Fatal, string.Format("Guest unhandled exception: {0}.", message));
+            Log(LogLevel.Fatal, string.Format(CultureInfo.InvariantCulture, "Guest unhandled exception: {0}.", message));
         }
 
         private void Log(LogLevel logLevel, string message)
@@ -89,6 +89,7 @@ namespace Shon
         /// <summary>
         /// Start the service
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public void Start(string parameter)
         {
             MethodInfo withParam = _payload.GetType().GetMethod(startName, BindingFlags.Public | BindingFlags.Instance, null, new Type[] { "".GetType() }, null);
@@ -107,19 +108,19 @@ namespace Shon
                 {
                     if (withParam != null)
                     {
-                        Log(LogLevel.Debug, string.Format("Host calling {0}.Start(\"{1}\")",
+                        Log(LogLevel.Debug, string.Format(CultureInfo.InvariantCulture, "Host calling {0}.Start(\"{1}\")",
                             _payload.GetType(), parameter ));
                         withParam.Invoke(_payload, new object[] { parameter });
                     }
                     else
                     {
-                        Log(LogLevel.Fatal, string.Format("Guest does not implement Start(string parameter), start failed",
-                            _payload.GetType(), parameter));
+                        Log(LogLevel.Fatal, string.Format(CultureInfo.InvariantCulture, "Guest {0} does not implement Start(string parameter), start failed",
+                            _payload.GetType()));
                     }
                 }
                 else
                 {
-                    Log(LogLevel.Debug, string.Format("Host calling {0}.Start()",
+                    Log(LogLevel.Debug, string.Format(CultureInfo.InvariantCulture, "Host calling {0}.Start()",
                        _payload.GetType()));
                     withoutParam.Invoke(_payload, null);
                 }
@@ -133,6 +134,7 @@ namespace Shon
          /// <summary>
         /// Stops the instance
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public void Stop()
         {
             if (_hasCrashed)

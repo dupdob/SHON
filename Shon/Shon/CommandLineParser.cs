@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,12 +33,16 @@ namespace Shon
         /// <param name="commandLine">commandline, expressed as an aray of string.</param>
         public void Parse(string[] commandLine)
         {
+            if (commandLine == null)
+            {
+                throw new ArgumentNullException("commandLine");
+            }
             for (int i = 0; i < commandLine.Length; i++)
             {
                 string command = commandLine[i];
-                if (command.StartsWith("/") || command.StartsWith("-"))
+                if (command.StartsWith("/", StringComparison.CurrentCultureIgnoreCase) || command.StartsWith("-", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    command = command.Substring(1).ToLower();
+                    command = command.Substring(1).ToLower(CultureInfo.CurrentCulture);
                     if (_valuesId.Contains(command))
                     {
                         i++;
@@ -73,25 +78,29 @@ namespace Shon
         /// <summary>
         /// Register a parameter requestion a value
         /// </summary>
-        /// <param name="param">parameter name</param>
-        public void RegisterParamValue(string param)
+        /// <param name="parameter">parameter name</param>
+        public void RegisterParamValue(string parameter)
         {
-            param = param.ToLower();
-            if (_valuesId.Contains(param))
+            if (parameter == null)
+            {
+                throw new ArgumentNullException("parameter");
+            }
+            parameter = parameter.ToLower(CultureInfo.CurrentCulture);
+            if (_valuesId.Contains(parameter))
             {
                 throw new InvalidOperationException("Cannot register the same option twice");
             }
-            _valuesId.Add(param); ;
+            _valuesId.Add(parameter); ;
         }
 
         /// <summary>
         /// Gets the named option value
         /// </summary>
-        /// <param name="param">The param.</param>
+        /// <param name="parameter">The param.</param>
         /// <returns>Parameter value</returns>
-        public string GetNamedOption(string param)
+        public string GetNamedOption(string parameter)
         {
-            return _namedValues[param];
+            return _namedValues[parameter];
         }
 
         /// <summary>
