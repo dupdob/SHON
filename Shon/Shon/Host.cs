@@ -1,12 +1,13 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-
-namespace Shon
+﻿namespace Shon
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Reflection;
+
+    using log4net;
+
     /// <summary>
     /// Manages the payload component, initialization and command forwarding
     /// </summary>
@@ -32,7 +33,7 @@ namespace Shon
 
         #region methods
         /// <summary>
-        /// Initialze payload component
+        /// Initialize payload component
         /// </summary>
         /// <param name="description">payload description</param>
         /// <returns>true if successful</returns>               

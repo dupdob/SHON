@@ -201,12 +201,11 @@ namespace Shon.Test
             thread.Interrupt();
         }
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void HostMethodChecks()
         {
             using (Host test = new Host())
             {
-                test.Initialize(null);
+                Assert.Throws<ArgumentNullException>(() => test.Initialize(null));
             }
         }
     }

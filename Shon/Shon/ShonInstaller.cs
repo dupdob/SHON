@@ -1,16 +1,24 @@
-﻿using System.Collections;
-using System.ComponentModel;
-using System.Configuration.Install;
-using System.IO;
-using System.Reflection;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using System.ServiceProcess;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ShonInstaller.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Defines the ShonInstaller type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Shon
 {
+    using System.Collections;
+    using System.ComponentModel;
+    using System.Configuration.Install;
+    using System.ServiceProcess;
+
+    /// <summary>
+    /// The shon installer.
+    /// </summary>
     [RunInstaller(true)]
-    public partial class ShonInstaller : System.Configuration.Install.Installer
+    public partial class ShonInstaller : Installer
     {
         private ServiceProcessInstaller _processInstaller;
         private ServiceInstaller _serviceInstaller;
@@ -34,7 +42,7 @@ namespace Shon
 
         }
 
-        protected override void OnBeforeInstall(System.Collections.IDictionary savedState)
+        protected override void OnBeforeInstall(IDictionary savedState)
         {
             Init(savedState);
             base.OnBeforeInstall(savedState);
