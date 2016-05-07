@@ -16,6 +16,7 @@ namespace Shon.Test
             try
             { 
                 ShonInstaller.InstallService("toto");
+
                 // sleep to ensure status is propagated
                 Stopwatch watch = new Stopwatch();
                 while (watch.ElapsedMilliseconds < 1000)

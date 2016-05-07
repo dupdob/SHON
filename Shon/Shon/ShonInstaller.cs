@@ -1,11 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ShonInstaller.cs" company="">
-//   
+// <copyright file="ShonInstaller.cs" company="Home">C.Dupuydauby
 // </copyright>
 // <summary>
 //   Defines the ShonInstaller type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
+
+using System.Threading;
 
 namespace Shon
 {
@@ -15,100 +16,143 @@ namespace Shon
     using System.ServiceProcess;
 
     /// <summary>
-    /// The shon installer.
+    /// The <see cref="ShonInstaller"/> installer.
     /// </summary>
     [RunInstaller(true)]
     public partial class ShonInstaller : Installer
     {
-        private ServiceProcessInstaller _processInstaller;
-        private ServiceInstaller _serviceInstaller;
+        /// <summary>
+        /// <see cref="ServiceProcessInstaller"/> instance used for the service setup.
+        /// </summary>
+        private readonly ServiceProcessInstaller processInstaller;
 
+        /// <summary>
+        /// <see cref="ServiceInstaller"/> instance used for the service setup.
+        /// </summary>
+        private readonly ServiceInstaller serviceInstaller;
+
+        private static string serviceName;
+
+        public static string ServiceName
+        {
+            get { return serviceName; }
+            set { serviceName = value; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShonInstaller"/> class.
+        /// </summary>
         public ShonInstaller()
         {
-            _processInstaller = new ServiceProcessInstaller();
-            _serviceInstaller = new ServiceInstaller();
-            Installers.Add(_processInstaller);
-            Installers.Add(_serviceInstaller);
-            InitializeComponent();
-        }
-
-        public void Init(IDictionary savedState)
-        {
-            _processInstaller.Account = ServiceAccount.LocalSystem;
-            _processInstaller.Username = null;
-            _processInstaller.Password = null;
-
-            _serviceInstaller.ServiceName = (string) savedState["ServiceName"];
-
-        }
-
-        protected override void OnBeforeInstall(IDictionary savedState)
-        {
-            Init(savedState);
-            base.OnBeforeInstall(savedState);
-        }
-
-        protected override void OnBeforeUninstall(IDictionary savedState)
-        {
-            Init(savedState);
-            base.OnBeforeUninstall(savedState);
+            this.processInstaller = new ServiceProcessInstaller();
+            this.serviceInstaller = new ServiceInstaller();
+            this.Installers.Add(this.processInstaller);
+            this.Installers.Add(this.serviceInstaller);
+            this.InitializeComponent();
         }
 
         /// <summary>
         /// Installs the service
         /// </summary>
+        /// <param name="serviceName">Name of the service to be installed</param>
         public static void InstallService(string serviceName)
         {
-                 using (AssemblyInstaller installer = GetInstaller())
+            using (var installer = GetInstaller())
+            {
+ 
+                ShonInstaller.ServiceName = serviceName;
+                IDictionary state = new Hashtable();
+                try
                 {
-                    IDictionary state = new Hashtable();
-                    state["ServiceName"] = serviceName;
+                    installer.Install(state);
+                    installer.Commit(state);
+                }
+                catch
+                {
                     try
                     {
-                        installer.Install(state);
-                        installer.Commit(state);
+                        installer.Rollback(state);
                     }
                     catch
                     {
-                        try
-                        {
-                            installer.Rollback(state);
-                        }
-                        catch
-                        {
-                        }
-                        throw;
+                        // ignored (report only install errors)
                     }
-                }
-        }
 
-        private static AssemblyInstaller GetInstaller()
-        {
-            AssemblyInstaller installer = new AssemblyInstaller(
-                typeof(Service).Assembly, null);
-            installer.UseNewContext = true;
-            return installer;
+                    throw;
+                }
+            }
         }
 
         /// <summary>
         /// Uninstall the service
         /// </summary>
+        /// <param name="serviceName">Name of the service to be uninstalled</param>
         public static void UninstallService(string serviceName)
         {
-                 using (AssemblyInstaller installer = GetInstaller())
+            using (var installer = GetInstaller())
+            {
+                ShonInstaller.ServiceName = serviceName;
+                IDictionary state = new Hashtable();
+                try
                 {
-                    IDictionary state = new Hashtable();
-                    state["ServiceName"] = serviceName;
-                    try
-                    {
-                        installer.Uninstall(state);
-                    }
-                    catch
-                    {
-                        throw;
-                    }
+                    installer.Uninstall(state);
                 }
-      }
+                catch
+                {
+                    throw;
+                }
+            }
+        }
 
+        /// <summary>
+        /// The initialization step.
+        /// </summary>
+        /// <param name="savedState">
+        /// The saved state.
+        /// </param>
+        public void Init(IDictionary savedState)
+        {
+            this.processInstaller.Account = ServiceAccount.LocalSystem;
+            this.processInstaller.Username = null;
+            this.processInstaller.Password = null;
+
+            this.serviceInstaller.ServiceName = ServiceName;
+        }
+
+        /// <summary>
+        /// The on before install.
+        /// </summary>
+        /// <param name="savedState">
+        /// The saved state.
+        /// </param>
+        protected override void OnBeforeInstall(IDictionary savedState)
+        {
+            this.Init(savedState);
+            base.OnBeforeInstall(savedState);
+        }
+
+        /// <summary>
+        /// The on before uninstall.
+        /// </summary>
+        /// <param name="savedState">
+        /// The saved state.
+        /// </param>
+        protected override void OnBeforeUninstall(IDictionary savedState)
+        {
+            this.Init(savedState);
+            base.OnBeforeUninstall(savedState);
+        }
+
+        /// <summary>
+        /// Gets the service installer for this assembly.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="AssemblyInstaller"/> instance, null if none found.
+        /// </returns>
+        private static AssemblyInstaller GetInstaller()
+        {
+            var installer = new AssemblyInstaller(typeof(Service).Assembly, null) { UseNewContext = true };
+            return installer;
+        }
     }
 }
