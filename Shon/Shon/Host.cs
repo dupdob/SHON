@@ -3,9 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.IO;
-    using System.Reflection;
-
     using log4net;
 
     /// <summary>
@@ -44,7 +41,7 @@
             {
                 throw new ArgumentNullException("description");
             }
-            _description = description;
+            this._description = description;
             _logger = LogManager.GetLogger(string.Format(CultureInfo.InvariantCulture, "Host[{0}]{1}", _description.AssemblyFileName, _description.Class));
            // work the creation of the appomain
             setup.ApplicationBase = description.BinaryFolder;

@@ -1,46 +1,33 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ShonInstaller.cs" company="Home">C.Dupuydauby
-// </copyright>
-// <summary>
-//   Defines the ShonInstaller type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿
 
-using System.Threading;
+using System.Collections;
+using System.ComponentModel;
+using System.Configuration.Install;
+using System.Security.Principal;
+using System.ServiceProcess;
 
 namespace Shon
 {
-    using System.Collections;
-    using System.ComponentModel;
-    using System.Configuration.Install;
-    using System.ServiceProcess;
-
     /// <summary>
-    /// The <see cref="ShonInstaller"/> installer.
+    ///     The <see cref="ShonInstaller" /> installer.
     /// </summary>
     [RunInstaller(true)]
+    // ReSharper disable once ClassNeverInstantiated.Global
+    // class is instantiated through reflection
     public partial class ShonInstaller : Installer
     {
         /// <summary>
-        /// <see cref="ServiceProcessInstaller"/> instance used for the service setup.
+        ///     <see cref="ServiceProcessInstaller" /> instance used for the service setup.
         /// </summary>
         private readonly ServiceProcessInstaller processInstaller;
 
         /// <summary>
-        /// <see cref="ServiceInstaller"/> instance used for the service setup.
+        ///     <see cref="ServiceInstaller" /> instance used for the service setup.
         /// </summary>
         private readonly ServiceInstaller serviceInstaller;
 
-        private static string serviceName;
-
-        public static string ServiceName
-        {
-            get { return serviceName; }
-            set { serviceName = value; }
-        }
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShonInstaller"/> class.
+        ///     Initializes a new instance of the <see cref="ShonInstaller" /> class.
         /// </summary>
         public ShonInstaller()
         {
@@ -51,16 +38,17 @@ namespace Shon
             this.InitializeComponent();
         }
 
+        private static string ServiceName { get; set; }
+
         /// <summary>
-        /// Installs the service
+        ///     Installs the service
         /// </summary>
         /// <param name="serviceName">Name of the service to be installed</param>
         public static void InstallService(string serviceName)
         {
             using (var installer = GetInstaller())
             {
- 
-                ShonInstaller.ServiceName = serviceName;
+                ServiceName = serviceName;
                 IDictionary state = new Hashtable();
                 try
                 {
@@ -83,15 +71,22 @@ namespace Shon
             }
         }
 
+        public static bool HasServiceInstallationRigths()
+        {
+            var curIdentity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(curIdentity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
         /// <summary>
-        /// Uninstall the service
+        ///     Uninstall the service
         /// </summary>
         /// <param name="serviceName">Name of the service to be uninstalled</param>
         public static void UninstallService(string serviceName)
         {
             using (var installer = GetInstaller())
             {
-                ShonInstaller.ServiceName = serviceName;
+                ServiceName = serviceName;
                 IDictionary state = new Hashtable();
                 try
                 {
@@ -105,12 +100,12 @@ namespace Shon
         }
 
         /// <summary>
-        /// The initialization step.
+        ///     The initialization step.
         /// </summary>
         /// <param name="savedState">
-        /// The saved state.
+        ///     The saved state.
         /// </param>
-        public void Init(IDictionary savedState)
+        private void Init(IDictionary savedState)
         {
             this.processInstaller.Account = ServiceAccount.LocalSystem;
             this.processInstaller.Username = null;
@@ -120,10 +115,10 @@ namespace Shon
         }
 
         /// <summary>
-        /// The on before install.
+        ///     The on before install.
         /// </summary>
         /// <param name="savedState">
-        /// The saved state.
+        ///     The saved state.
         /// </param>
         protected override void OnBeforeInstall(IDictionary savedState)
         {
@@ -132,10 +127,10 @@ namespace Shon
         }
 
         /// <summary>
-        /// The on before uninstall.
+        ///     The on before uninstall.
         /// </summary>
         /// <param name="savedState">
-        /// The saved state.
+        ///     The saved state.
         /// </param>
         protected override void OnBeforeUninstall(IDictionary savedState)
         {
@@ -144,14 +139,14 @@ namespace Shon
         }
 
         /// <summary>
-        /// Gets the service installer for this assembly.
+        ///     Gets the service installer for this assembly.
         /// </summary>
         /// <returns>
-        /// The <see cref="AssemblyInstaller"/> instance, null if none found.
+        ///     The <see cref="AssemblyInstaller" /> instance, null if none found.
         /// </returns>
         private static AssemblyInstaller GetInstaller()
         {
-            var installer = new AssemblyInstaller(typeof(Service).Assembly, null) { UseNewContext = true };
+            var installer = new AssemblyInstaller(typeof(Service).Assembly, null) {UseNewContext = true};
             return installer;
         }
     }

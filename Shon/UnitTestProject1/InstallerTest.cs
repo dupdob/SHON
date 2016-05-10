@@ -13,12 +13,14 @@ namespace Shon.Test
         public void BasicInstallTest()
         {
             ServiceController controler;
+            if (!ShonInstaller.HasServiceInstallationRigths())
+                Assert.Ignore("Need admin rigthts for this test");
             try
             { 
                 ShonInstaller.InstallService("toto");
 
                 // sleep to ensure status is propagated
-                Stopwatch watch = new Stopwatch();
+                var watch = new Stopwatch();
                 while (watch.ElapsedMilliseconds < 1000)
                 {
                     Thread.Sleep(100);

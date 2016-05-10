@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Threading;
@@ -9,7 +8,7 @@ namespace Shon.Test
     [TestFixture]
     public class InstallationTest
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Install()
         {
             ServiceController controler;
@@ -19,7 +18,8 @@ namespace Shon.Test
                 file = '"' + file + '"';
             }
             ProcessStartInfo start = new ProcessStartInfo(file, "/install");
-            start.UseShellExecute = false;
+            start.UseShellExecute = true;
+            start.Verb = "runas";
             using (Process process = Process.Start(start))
             {
                 // run install
@@ -55,7 +55,8 @@ namespace Shon.Test
             controler = new ServiceController("toto");
             Assert.AreEqual(ServiceControllerStatus.Stopped, controler.Status);
         }
-        [TestFixtureTearDown]
+
+        [OneTimeTearDown]
         public void TearDown()
         {
            ServiceController controler;
@@ -67,7 +68,8 @@ namespace Shon.Test
             {
                 string file = typeof(Shon.Host).Assembly.Location;
                 ProcessStartInfo start = new ProcessStartInfo(@"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe", "/uninstall "+file);
-                start.UseShellExecute = false;
+                start.UseShellExecute = true;
+                start.Verb = "runas";
                 using (Process process = Process.Start(start))
                 {
                     // run install
@@ -88,15 +90,14 @@ namespace Shon.Test
         [Test(Description = "Check service starts")]
         public void StartTest()
         {
-            ServiceController controler;
-            controler = new ServiceController("toto");
+            var controler = new ServiceController("toto");
             if (controler.Status == ServiceControllerStatus.Running)
             {
                 controler.Stop();
                 Thread.Sleep(2000);
             }
             controler.Start();
-            Stopwatch watch = new Stopwatch();
+            var watch = new Stopwatch();
             watch.Start();
             while (watch.ElapsedMilliseconds < 1000)
             {

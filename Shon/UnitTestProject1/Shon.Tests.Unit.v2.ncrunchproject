@@ -2,7 +2,7 @@
   <AutoDetectNugetBuildDependencies>true</AutoDetectNugetBuildDependencies>
   <BuildPriority>1000</BuildPriority>
   <CopyReferencedAssembliesToWorkspace>false</CopyReferencedAssembliesToWorkspace>
-  <ConsiderInconclusiveTestsAsPassing>false</ConsiderInconclusiveTestsAsPassing>
+  <ConsiderInconclusiveTestsAsPassing>true</ConsiderInconclusiveTestsAsPassing>
   <PreloadReferencedAssemblies>false</PreloadReferencedAssemblies>
   <AllowDynamicCodeContractChecking>true</AllowDynamicCodeContractChecking>
   <AllowStaticCodeContractChecking>false</AllowStaticCodeContractChecking>
